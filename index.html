@@ -1,5 +1,20 @@
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Wedding Photos</title>
+</head>
+<body>
+  <h1>Upload Wedding Photos</h1>
+  <form id="uploadForm">
+    <input type="file" id="fileInput" accept="image/*">
+    <button type="submit">Upload</button>
+  </form>
+  <p id="status"></p>
+
+  <!-- Move the script tag here -->
+  <script>
     const form = document.getElementById("uploadForm");
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -13,7 +28,7 @@
       reader.onload = async function () {
         const base64Data = reader.result.split(",")[1];
         try {
-          const response = await fetch("https://script.google.com/macros/s/AKfycbyJiBox2hzK3OHSKD_RUSVmWBQYr_EPvBqoA0iyibqtzF5oVNC2UCSkiVH00Z4UcG8c/exec", {
+          const response = await fetch("https://script.google.com/macros/s/AKfycbwpSf5cqOkkz4b77nrae4CvYPN-00nn_xuZGnzk6hyqh0tJqqHOq7ttEs1nR3YlPv8/exec", {
             method: "POST",
             body: JSON.stringify({
               fileName: file.name, // Send the original file name
@@ -36,5 +51,6 @@
       };
       reader.readAsDataURL(file);
     });
-  });
-</script>
+  </script>
+</body>
+</html>
