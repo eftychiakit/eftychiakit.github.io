@@ -3,53 +3,50 @@
   <button type="submit">Upload</button>
 </form>
 <div id="status"></div>
-<!-- Move the script tag here -->
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("uploadForm");
-    if (!form) {
-      console.error("Form element with ID 'uploadForm' not found.");
+  const form = document.getElementById("uploadForm");
+  if (!form) {
+    console.error("Form element with ID 'uploadForm' not found.");
+    return;
+  }
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) {
+      document.getElementById("status").textContent = "No file selected.";
       return;
     }
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const file = document.getElementById("fileInput").files[0];
-      if (!file) {
-        document.getElementById("status").textContent = "No file selected.";
-        return;
-      }
 
-      const reader = new FileReader();
-      reader.onload = async function () {
-        const base64Data = reader.result.split(",")[1];
-        console.log("Full File Data:", reader.result); // Log the full file data for debugging
-        console.log("Base64 Data:", base64Data); // Log the base64 string for debugging
-        try {
-          const response = await fetch("https://script.google.com/macros/s/AKfycbwpSf5cqOkkz4b77nrae4CvYPN-00nn_xuZGnzk6hyqh0tJqqHOq7ttEs1nR3YlPv8/exec", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json", // Specify JSON content type
-            },
-            body: JSON.stringify({
-              fileName: file.name, // Send the original file name
-              fileData: base64Data
-            }),
-          });
+    const reader = new FileReader();
+    reader.onload = async function () {
+      const base64Data = reader.result.split(",")[1];
+      console.log("Full File Data:", reader.result); // Log the full file data for debugging
+      console.log("Base64 Data:", base64Data); // Log the base64 string for debugging
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwpSf5cqOkkz4b77nrae4CvYPN-00nn_xuZGnzk6hyqh0tJqqHOq7ttEs1nR3YlPv8/exec", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Specify JSON content type
+          },
+          body: JSON.stringify({
+            fileName: file.name, // Send the original file name
+            fileData: base64Data
+          }),
+        });
 
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          const result = await response.json(); // Parse JSON response
-          document.getElementById("status").textContent = result.message === "Success"
-            ? "Upload successful!"
-            : "Upload failed: " + result.message;
-        } catch (error) {
-          console.error("Error during upload:", error);
-          document.getElementById("status").textContent = "Upload failed: " + error.message;
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-      };
-      reader.readAsDataURL(file);
-    });
+
+        const result = await response.json(); // Parse JSON response
+        document.getElementById("status").textContent = result.message === "Success"
+          ? "Upload successful!"
+          : "Upload failed: " + result.message;
+      } catch (error) {
+        console.error("Error during upload:", error);
+        document.getElementById("status").textContent = "Upload failed: " + error.message;
+      }
+    };
+    reader.readAsDataURL(file);
   });
 </script>
