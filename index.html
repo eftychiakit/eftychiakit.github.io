@@ -1,6 +1,15 @@
+<form id="uploadForm">
+  <input type="file" id="fileInput" />
+  <button type="submit">Upload</button>
+</form>
+<div id="status"></div>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("uploadForm");
+    if (!form) {
+      console.error("Form element with ID 'uploadForm' not found.");
+      return;
+    }
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const file = document.getElementById("fileInput").files[0];
