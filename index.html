@@ -17,23 +17,35 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const file = document.getElementById("fileInput").files[0];
-      if (!file) return;
+      if (!file) {
+        document.getElementById("status").textContent = "No file selected.";
+        return;
+      }
 
       const reader = new FileReader();
       reader.onload = async function () {
         const base64Data = reader.result.split(",")[1];
-        const response = await fetch("https://script.google.com/macros/s/AKfycbxC3hT1KEYDuKeJcErb12nLqYGJ-CDfxDx4jbLaf7n8p_vXjooKlLh42ynb6CJF22fW/exec", {
-          method: "POST",
-          headers: {
-            "Content-Type": file.type,
-          },
-          body: base64Data,
-        });
+        try {
+          const response = await fetch("https://script.google.com/macros/s/AKfycbxC3hT1KEYDuKeJcErb12nLqYGJ-CDfxDx4jbLaf7n8p_vXjooKlLh42ynb6CJF22fW/exec", {
+            method: "POST",
+            headers: {
+              "Content-Type": file.type,
+            },
+            body: base64Data,
+          });
 
-        const result = await response.text();
-        document.getElementById("status").textContent = result.includes("Success")
-          ? "Upload successful!"
-          : "Upload failed: " + result;
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          const result = await response.text();
+          document.getElementById("status").textContent = result.includes("Success")
+            ? "Upload successful!"
+            : "Upload failed: " + result;
+        } catch (error) {
+          console.error("Error during upload:", error);
+          document.getElementById("status").textContent = "Upload failed: " + error.message;
+        }
       };
       reader.readAsDataURL(file);
     });
