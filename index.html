@@ -1,1 +1,42 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Wedding Photos</title>
+</head>
+<body>
+  <h2>Upload Your Wedding Photos</h2>
+  <form id="uploadForm">
+    <input type="file" id="fileInput" accept="image/*" required>
+    <button type="submit">Upload</button>
+    <p id="status"></p>
+  </form>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const file = document.getElementById("fileInput").files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function () {
+        const base64Data = reader.result.split(",")[1];
+        const response = await fetch("https://script.google.com/macros/s/AKfycbxC3hT1KEYDuKeJcErb12nLqYGJ-CDfxDx4jbLaf7n8p_vXjooKlLh42ynb6CJF22fW/exec", {
+          method: "POST",
+          headers: {
+            "Content-Type": file.type,
+          },
+          body: base64Data,
+        });
+
+        const result = await response.text();
+        document.getElementById("status").textContent = result.includes("Success")
+          ? "Upload successful!"
+          : "Upload failed: " + result;
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
+</body>
+</html>
