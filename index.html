@@ -8,14 +8,14 @@
     const form = document.getElementById("uploadForm");
     if (!form) {
       console.error("Form element with ID 'uploadForm' not found.");
-      return;
+      return; // This return is valid because it's inside the function
     }
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const file = document.getElementById("fileInput").files[0];
       if (!file) {
         document.getElementById("status").textContent = "No file selected.";
-        return;
+        return; // This return is valid because it's inside the function
       }
 
       const reader = new FileReader();
