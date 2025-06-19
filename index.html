@@ -1,37 +1,41 @@
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("uploadForm");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const file = document.getElementById("fileInput").files[0];
-      if (!file) {
-        document.getElementById("status").textContent = "No file selected.";
-        return;
-      }
+  const form = document.getElementById("uploadForm");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) {
+      document.getElementById("status").textContent = "No file selected.";
+      return;
+    }
 
-      const reader = new FileReader();
-      reader.onload = async function () {
-        const base64Data = reader.result.split(",")[1];
-        try {
-          const response = await fetch("https://script.google.com/macros/s/AKfycbzDeX_JME-0SeuyGpUPV1QE409jAxOFfJM78VbnjGI-muStjQn3v_QEtKBlE4VMjNol/exec", {
-            method: "POST",
-            body: base64Data, // No custom headers
-          });
+    const reader = new FileReader();
+    reader.onload = async function () {
+      const base64Data = reader.result.split(",")[1];
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwPouo_T3nsmLTQ-qrHiISsK3ZZ18YsHX-5lrJPveACxX64vaE0IE5sqEaGgJXFhGft/exec", {
+          method: "POST",
+          headers: {
+            "Content-Type": file.type,
+          },
+          body: JSON.stringify({
+            fileName: file.name, // Send the original file name
+            fileData: base64Data
+          }),
+        });
 
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          const result = await response.json(); // Parse JSON response
-          document.getElementById("status").textContent = result.message === "Success"
-            ? "Upload successful!"
-            : "Upload failed: " + result.message;
-        } catch (error) {
-          console.error("Error during upload:", error);
-          document.getElementById("status").textContent = "Upload failed: " + error.message;
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-      };
-      reader.readAsDataURL(file);
-    });
+
+        const result = await response.json(); // Parse JSON response
+        document.getElementById("status").textContent = result.message === "Success"
+          ? "Upload successful!"
+          : "Upload failed: " + result.message;
+      } catch (error) {
+        console.error("Error during upload:", error);
+        document.getElementById("status").textContent = "Upload failed: " + error.message;
+      }
+    };
+    reader.readAsDataURL(file);
   });
 </script>
