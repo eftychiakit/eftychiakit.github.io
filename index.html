@@ -12,12 +12,9 @@
     reader.onload = async function () {
       const base64Data = reader.result.split(",")[1];
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbwUR_30l4bqYUX_6U-XNVDMJv3VoiCKW67FVa2nA0gdMDid6is0hQwPlQqtuagQ2ud0/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbzDeX_JME-0SeuyGpUPV1QE409jAxOFfJM78VbnjGI-muStjQn3v_QEtKBlE4VMjNol/exec", {
           method: "POST",
-          headers: {
-            "Content-Type": file.type,
-          },
-          body: base64Data,
+          body: base64Data, // No custom headers
         });
 
         if (!response.ok) {
